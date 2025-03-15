@@ -1,0 +1,44 @@
+name: ui-service-build-and-push-to-ecr
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select envs (dev, stag, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - stag
+          - prod
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ap-southeast-1
+          role-to-assume: arn:aws:iam::774305578623:role/github-terraform-role
+          #github-terraform-role has been authenticated with all repositories
+      
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image and tagging
+        uses: ./.github/actions/docker-build-and-tag
+        with:
+          aws_ecr_repo_name: deployment-mgmt-${{github.event.inputs.environment}}-ui-service-ecr
+          tag: ui-service
+
+      - name: Push Docker image to ECR
+        uses: ./.github/actions/docker-push-ecr
+        with:
+          aws_ecr_repo_name: deployment-mgmt-${{github.event.inputs.environment}}-ui-service-ecr
+          tag: ui-service

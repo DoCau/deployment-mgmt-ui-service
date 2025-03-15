@@ -1,0 +1,37 @@
+name: ui-service-check-build
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  pull_request_target:
+    types:
+      - closed
+    branches:
+      - master
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select envs (dev, stag, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - stag
+          - prod
+
+jobs:
+  ui-service-check-build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          sudo chmod 777 /var/run/docker.sock
+          docker build -t ui-service-${{github.event.inputs.environment}}:testtag . --no-cache
+    
