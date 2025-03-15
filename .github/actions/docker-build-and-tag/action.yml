@@ -13,6 +13,7 @@ runs:
   using: composite
   steps:
     - name: Build docker image
+      shell: bash
       run: |
         sudo chmod 777 /var/run/docker.sock
         docker build -t 774305578623.dkr.ecr.ap-southeast-1.amazonaws.com/${{inputs.aws_ecr_repo_name}}:{{inputs.tag}} . --no-cache
