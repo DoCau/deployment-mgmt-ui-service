@@ -6,12 +6,12 @@ function App() {
   const [deployments, setDeployments] = useState([]);
 
   useEffect(() => {
-    fetch('http://a07042951babc4edea1c0900c648188a-2040991358.ap-southeast-1.elb.amazonaws.com:8080/api/metrics')//replace hostname by api-gateway public hostname (EXTERNAL-IP)
+    fetch('http://api.deployment-mgmt.click/api/metrics')//replace hostname by api-gateway public hostname (EXTERNAL-IP)
       .then(res => res.text())
       .then(setMetrics)
       .catch(console.error);
 
-    fetch('http://a07042951babc4edea1c0900c648188a-2040991358.ap-southeast-1.elb.amazonaws.com:8080/api/deployments')//replace hostname by api-gateway public hostname (EXTERNAL-IP)
+    fetch('http://api.deployment-mgmt.click/api/deployments')//replace hostname by api-gateway public hostname (EXTERNAL-IP)
       .then(res => res.json())
       .then(setDeployments)
       .catch(console.error);
